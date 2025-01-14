@@ -1,0 +1,57 @@
+image: 
+  name: ubuntu:latest
+  pull_policy: always
+
+stages:
+  - Test
+  - Build
+
+services:
+  - mariadb:latest
+
+cache:
+  paths:
+    - node_modules/
+    - vendor/
+
+1. Installing composer packages:
+  stage: Test
+  script:
+    - apt-get update && apt-get install -y composer
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+
+2. Migrating Database and Running Tests:
+  stage: Test
+  needs:
+    - 1. Installing composer packages
+  script:
+    - apt-get update && apt-get install -y mariadb-server
+    - service mariadb start
+    - cp .env.example .env
+    - php artisan key:generate
+    - mysql -u root -e "CREATE DATABASE website;"
+    - mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'qlarapass';"
+    - php artisan migrate
+    - php artisan passport:keys --force
+    - php artisan passport:client --personal --name=users
+    - php artisan db:seed
+    - ./vendor/bin/pest --ci
+
+1. Installing NPM Packages:
+  stage: Build
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+    - source ~/.nvm/nvm.sh
+    - nvm install v22.11.0
+    - nvm use v22.11.0
+    - npm install
+
+2. Building JS & CSS:
+  stage: Build
+  needs:
+    - 1. Installing NPM Packages
+  script:
+    - source ~/.nvm/nvm.sh
+    - nvm use v22.11.0
+    - npm run production

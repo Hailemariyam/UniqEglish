@@ -1,0 +1,192 @@
+User => login, show
+  -first_name
+  -middle_name
+  -last_name 
+  -full_name , nullable
+  -email, required
+  -password, required
+  -phone
+  -profile
+  -background
+  -role(systemAdmin, instructor, student)
+  -permission{systemAdmin:{instractor}, create, update, delete, show, download}
+  -sms_Verfication, nullable
+  -documents [cv, citeficate, ...], nullable
+  -bio , nullable
+  -decription , nullable
+  -verfication , nullable
+  -user_id, nullable
+
+# instraactore
+Course 
+  -id
+  -course_name [english language commiunication], required
+  -overview
+  -description 
+  -tag [#grammer, commiunication, vocabulary ...]
+  -skill_level (beginner, intermediate, advanced, fullpackage)
+  -price 
+  -discount
+  -hour
+  -user_id,
+
+CourseContent
+  -id
+  -course_id
+  -squence (step1, step2, step3)
+  -title 
+  -content_type,  [video, pdf, image ...]
+  -content_url, 
+  -temnail_url (image)
+  -duration
+  -status (draft, published, archived)
+  -note
+  -isDownloadable
+  -user_id,
+
+Quize 
+  -id
+  -course_id
+  -course_content_id, nullable
+  -title, nullable (it may be the title of lesson)
+  -instraction, nullable  (either instraction or course_content_id)
+  -question_type [true/false, choice, short answer]
+  -question 
+  -choice, {a, b, c, d}, nullable
+  -answere
+  -order
+  -user_id,
+
+Books 
+  -id
+  -title
+  -auther
+  -description
+  -page_number
+  -publish_date
+  -eddition
+  -price
+  -discount
+  -tag [skill, knowlwdge, innovation, communication]
+  -language
+  -format (audio, pdf ...)
+  -temnail_url (image)
+  -file_url (audio, pdf ..)
+  -isDownloadable
+  -user_id,
+
+LiveSession
+  -id
+  -instractor_id
+  -title
+  -description
+  -start_time
+  -end_time
+  -stream_url
+  -status (scheduled, live, completd, cancelled)
+  -max_participants
+  -user_id,
+
+Participant
+  -id
+  -live_session_id
+  -user_id
+  -joined_at 
+  -status (registerd, joined, left)
+  -user_id,
+
+LiveResource 
+  -id
+  -live_session_id
+  -resource_name
+  -resurce_url
+  -user_id,
+
+# student
+Enrollment
+  -id
+  -course_id
+  -progress
+  -enrolled_at
+  -user_id,
+
+VertualClassEnrollment
+  -id,
+  -instractor_id
+  -price_plan (monthly, 3 month, 6 month)
+  -enrolled_at
+  -end_date (get from  price_plan)
+  -remaining_date
+  -user_id,
+
+Result 
+  -id
+  -content_id
+  -result
+  -user_id,
+
+OrderedBook
+  -id
+  -book_id
+  -enrolled_at
+  -user_id,
+
+Achivment
+-name
+-description
+-required_action
+-required_value
+-reward_type [point, badge, discount]
+-reward_value
+-user_id
+
+FeedBack
+  -id
+  -course_id
+  -instractor_id
+  -rate (intger, no stars)
+  -message
+  -user_id
+  -user_id,
+
+#system admin
+Certification
+  -id
+  -user_id
+  -course_id
+  -vertual_class_id
+  -user_id,
+
+QASection
+  -id
+  -question
+  -q_a_section_id (recursive loop for replies like answer or question )
+  -user_id,
+
+Visitor  => fetch, create            
+  -ip_address             
+  -user_agent
+  -email, nullable
+  -user_id, 
+
+Transaction 
+  -id
+  -user_id
+  -amount
+  -transaction_type [credit, debit]
+  -status [pending, completed, failed]
+  -payment_method [paypal, stripe, bank]
+  -transaction_id
+  -enrollment_id, nullable
+  -vertual_class_enrollment_id, nullable
+  -order_book_id [one of them must avilable [enrollment_id, vertual_class_enrollment_id, v]]
+  -user_id,
+
+Notification
+  -id
+  -user_id (sender)
+  -message
+  -status [read, unread]
+  -type [system, user]
+  -user_id, (reciver)
+  
